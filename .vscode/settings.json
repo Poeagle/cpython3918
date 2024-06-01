@@ -1,0 +1,12 @@
+{
+	"C_Cpp.errorSquiggles": "disabled",
+	"files.associations": {
+		"*.txt": "dolphindb",
+		"bytesobject.h": "c",
+		"pyframe.h": "c",
+		"python.h": "c",
+		"system_error": "c",
+		"opcode_targets.h": "c",
+		"typeinfo": "c"
+	}
+}
