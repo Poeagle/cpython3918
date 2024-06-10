@@ -6,7 +6,7 @@ such it requires the injection of specific modules and attributes in order to
 work. One should use importlib as the public-facing version of this module.
 
 """
-#
+# #
 # IMPORTANT: Whenever making changes to this module, be sure to run a top-level
 # `make regen-importlib` followed by `make` in order to get the frozen version
 # of the module updated. Not doing so will result in the Makefile to fail for
@@ -23,6 +23,7 @@ work. One should use importlib as the public-facing version of this module.
 # Bootstrap-related code ######################################################
 
 _bootstrap_external = None
+
 
 def _wrap(new, old):
     """Simple substitute for functools.update_wrapper."""
@@ -217,6 +218,8 @@ def _lock_unlock_module(name):
         lock.release()
 
 # Frame stripping magic ###############################################
+
+
 def _call_with_frames_removed(f, *args, **kwds):
     """remove_importlib_frames in import.c will always remove sequences
     of importlib frames that end with a call to this function
@@ -238,6 +241,7 @@ def _verbose_message(message, *args, verbosity=1):
 
 def _requires_builtin(fxn):
     """Decorator to verify the named module is built-in."""
+
     def _requires_builtin_wrapper(self, fullname):
         if fullname not in sys.builtin_module_names:
             raise ImportError('{!r} is not a built-in module'.format(fullname),
@@ -249,6 +253,7 @@ def _requires_builtin(fxn):
 
 def _requires_frozen(fxn):
     """Decorator to verify the named module is frozen."""
+
     def _requires_frozen_wrapper(self, fullname):
         if not _imp.is_frozen(fullname):
             raise ImportError('{!r} is not a frozen module'.format(fullname),
@@ -274,6 +279,7 @@ def _load_module_shim(self, fullname):
         return _load(spec)
 
 # Module specifications #######################################################
+
 
 def _module_repr(module):
     # The implementation of ModuleType.__repr__().
@@ -656,6 +662,7 @@ def _load_backward_compatible(spec):
             pass
     return module
 
+
 def _load_unlocked(spec):
     # A helper for direct use by the import system.
     if spec.loader is not None:
@@ -698,6 +705,8 @@ def _load_unlocked(spec):
 
 # A method used during testing of _load_unlocked() and by
 # _load_module_shim().
+
+
 def _load(spec):
     """Return a new module object, loaded by the spec's loader.
 
@@ -964,6 +973,7 @@ def _sanity_check(name, package, level):
 _ERR_MSG_PREFIX = 'No module named '
 _ERR_MSG = _ERR_MSG_PREFIX + '{!r}'
 
+
 def _find_and_load_unlocked(name, import_):
     path = None
     parent = name.rpartition('.')[0]
@@ -1061,7 +1071,7 @@ def _handle_fromlist(module, fromlist, import_, *, recursive=False):
                 # imports triggered by fromlist for modules that don't
                 # exist.
                 if (exc.name == from_name and
-                    sys.modules.get(from_name, _NEEDS_LOADING) is not None):
+                        sys.modules.get(from_name, _NEEDS_LOADING) is not None):
                     continue
                 raise
     return module
