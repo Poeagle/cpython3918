@@ -34,14 +34,17 @@ extern "C"
     static PyStatus
     pymain_init(const _PyArgv *args)
     {
+        _showFuncName;
         PyStatus status;
 
+        // runtime 初始化
         status = _PyRuntime_Initialize();
         if (_PyStatus_EXCEPTION(status))
         {
             return status;
         }
 
+        // preconfig 初始化
         PyPreConfig preconfig;
         PyPreConfig_InitPythonConfig(&preconfig);
 
@@ -51,6 +54,7 @@ extern "C"
             return status;
         }
 
+        // config 初始化
         PyConfig config;
         PyConfig_InitPythonConfig(&config);
 
@@ -238,6 +242,7 @@ extern "C"
     static int
     pymain_run_command(wchar_t *command, PyCompilerFlags *cf)
     {
+        _showFuncName;
         PyObject *unicode, *bytes;
         int ret;
 
@@ -271,6 +276,7 @@ extern "C"
     static int
     pymain_run_module(const wchar_t *modname, int set_argv0)
     {
+        _showFuncName;
         PyObject *module, *runpy, *runmodule, *runargs, *result;
         if (PySys_Audit("cpython.run_module", "u", modname) < 0)
         {
@@ -328,6 +334,7 @@ extern "C"
     static int
     pymain_run_file(const PyConfig *config, PyCompilerFlags *cf)
     {
+        _showFuncName;
         const wchar_t *filename = config->run_filename;
         if (PySys_Audit("cpython.run_file", "u", filename) < 0)
         {
@@ -616,6 +623,7 @@ extern "C"
                 goto error;
             }
         }
+
         else if (!config->isolated)
         {
             PyObject *path0 = NULL;
@@ -640,7 +648,7 @@ extern "C"
 
         pymain_header(config);
         pymain_import_readline(config);
-
+        // 根据配置中的不同情况来执行不同的运行函数
         if (config->run_command)
         {
             *exitcode = pymain_run_command(config->run_command, &cf);
@@ -759,17 +767,22 @@ extern "C"
     pymain_main(_PyArgv *args)
     {
         _showFuncName;
+        // [cymDebug -> initialize all the things]
         PyStatus status = pymain_init(args);
+        printf("init ok!\n");
         if (_PyStatus_IS_EXIT(status))
         {
+            printf("enter _PyStatus_IS_EXIT \n");
             pymain_free();
             return status.exitcode;
         }
         if (_PyStatus_EXCEPTION(status))
         {
+            printf("enter _PyStatus_EXCEPTION \n");
             pymain_exit_error(status);
         }
-
+        // [cymDebug -> run python after initializing]
+        printf("ready to enter Py_RunMain!\n");
         return Py_RunMain();
     }
 

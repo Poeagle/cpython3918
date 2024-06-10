@@ -1032,6 +1032,7 @@ type_repr(PyTypeObject *type)
     return rtn;
 }
 
+// [cymDebug -> type(*args, **kwargs)]
 static PyObject *
 type_call(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
@@ -1049,12 +1050,18 @@ type_call(PyTypeObject *type, PyObject *args, PyObject *kwds)
     /* We only want type itself to accept the one-argument form (#27157) */
     if (type == &PyType_Type)
     {
+        // 位置参数必须不为NULL且数据类型为元组
         assert(args != NULL && PyTuple_Check(args));
+        // 关键字参数为NULL或者数据类型为字典
         assert(kwds == NULL || PyDict_Check(kwds));
+        // 位置参数个数
         Py_ssize_t nargs = PyTuple_GET_SIZE(args);
 
+        // 位置参数个数为1且（关键字参数为NULL或个数为0）
+        // type(obj) -> 获取obj的数据类型
         if (nargs == 1 && (kwds == NULL || !PyDict_GET_SIZE(kwds)))
         {
+            // args[0] -> ob_type
             obj = (PyObject *)Py_TYPE(PyTuple_GET_ITEM(args, 0));
             Py_INCREF(obj);
             return obj;
@@ -3461,6 +3468,7 @@ PyType_GetModuleState(PyTypeObject *type)
 static PyObject *
 find_name_in_mro(PyTypeObject *type, PyObject *name, int *error)
 {
+    _showFuncName;
     Py_ssize_t i, n;
     PyObject *mro, *res, *base, *dict;
     Py_hash_t hash;
@@ -7248,6 +7256,7 @@ slot_tp_hash(PyObject *self)
 static PyObject *
 slot_tp_call(PyObject *self, PyObject *args, PyObject *kwds)
 {
+    _showFuncName;
     PyThreadState *tstate = _PyThreadState_GET();
     _Py_IDENTIFIER(__call__);
     int unbound;

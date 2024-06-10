@@ -246,6 +246,7 @@ builtin___build_class__(PyObject *self, PyObject *const *args, Py_ssize_t nargs,
                      Py_TYPE(ns)->tp_name);
         goto error;
     }
+    // 执行类代码对象
     cell = PyEval_EvalCodeEx(PyFunction_GET_CODE(func), PyFunction_GET_GLOBALS(func), ns,
                              NULL, 0, NULL, 0, NULL, 0, NULL,
                              PyFunction_GET_CLOSURE(func));
@@ -889,6 +890,7 @@ finally:
 static PyObject *
 builtin_dir(PyObject *self, PyObject *args)
 {
+    _showFuncName;
     PyObject *arg = NULL;
 
     if (!PyArg_UnpackTuple(args, "dir", 0, 1, &arg))

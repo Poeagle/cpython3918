@@ -918,7 +918,7 @@ eval_frame_handle_pending(PyThreadState *tstate)
 PyObject *_Py_HOT_FUNCTION
 _PyEval_EvalFrameDefault(PyThreadState *tstate, PyFrameObject *f, int throwflag)
 {
-    // [cymDebug -> _PyEval_EvalFrameDefault]
+    // [cymDebug -> the entry where execute the code]
     _showFuncName;
     _Py_EnsureTstateNotNULL(tstate);
 
@@ -1342,11 +1342,11 @@ _PyEval_EvalFrameDefault(PyThreadState *tstate, PyFrameObject *f, int throwflag)
     assert(PyBytes_Check(co->co_code));
     assert(PyBytes_GET_SIZE(co->co_code) <= INT_MAX);
     // [cymDebug -> get code byte size and value]
+// 打印字节码
+#ifdef OPEN
     // 获取字节码指针和长度
     char *bytecode = PyBytes_AS_STRING(co->co_code);
     Py_ssize_t bytecode_len = PyBytes_GET_SIZE(co->co_code);
-
-    // 打印字节码
     printf("Bytecode (length: %zd):\n", bytecode_len);
     for (Py_ssize_t i = 0; i < bytecode_len; i++)
     {
@@ -1357,6 +1357,8 @@ _PyEval_EvalFrameDefault(PyThreadState *tstate, PyFrameObject *f, int throwflag)
         }
     }
     printf("\n");
+#endif
+
     assert(PyBytes_GET_SIZE(co->co_code) % sizeof(_Py_CODEUNIT) == 0);
     assert(_Py_IS_ALIGNED(PyBytes_AS_STRING(co->co_code), sizeof(_Py_CODEUNIT)));
 

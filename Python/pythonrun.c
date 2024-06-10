@@ -129,9 +129,14 @@ extern "C"
             Py_XDECREF(v);
         }
         err = 0;
+        // [cymDebug -> count the number that call function PyRun_InteractiveOneObjectEx]
+        int count = 0;
         do
         {
+            count += 1;
+            printf("call times: %d ", count);
             ret = PyRun_InteractiveOneObjectEx(fp, filename, flags);
+
             if (ret == -1 && PyErr_Occurred())
             {
                 /* Prevent an endless loop after multiple consecutive MemoryErrors
@@ -165,6 +170,7 @@ extern "C"
 #endif
         } while (ret != E_EOF);
         Py_DECREF(filename);
+        printf("I'm out with err code : %d\n", err);
         return err;
     }
 
@@ -1646,6 +1652,7 @@ extern "C"
                                const char *ps2, PyCompilerFlags *flags, int *errcode,
                                PyArena *arena)
     {
+        _showFuncName;
         mod_ty mod;
         PyCompilerFlags localflags = _PyCompilerFlags_INIT;
         perrdetail err;

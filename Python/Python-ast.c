@@ -8,6 +8,8 @@
 
 typedef struct {
     int initialized;
+    PyObject *ALE_singleton;
+    PyObject *ALE_type;
     PyObject *AST_type;
     PyObject *Add_singleton;
     PyObject *Add_type;
@@ -253,6 +255,8 @@ get_ast_state(PyObject* Py_UNUSED(module))
 void _PyAST_Fini()
 {
     astmodulestate* state = &global_ast_state;
+    Py_CLEAR(state->ALE_singleton);
+    Py_CLEAR(state->ALE_type);
     Py_CLEAR(state->AST_type);
     Py_CLEAR(state->Add_singleton);
     Py_CLEAR(state->Add_type);
@@ -1725,7 +1729,7 @@ static int init_types(astmodulestate *state)
                                               NULL, NULL);
     if (!state->USub_singleton) return 0;
     state->cmpop_type = make_type(state, "cmpop", state->AST_type, NULL, 0,
-        "cmpop = Eq | NotEq | Lt | LtE | Gt | GtE | Is | IsNot | In | NotIn");
+        "cmpop = Eq | NotEq | Lt | LtE | Gt | GtE | Is | IsNot | In | NotIn | ALE");
     if (!state->cmpop_type) return 0;
     if (!add_attributes(state, state->cmpop_type, NULL, 0)) return 0;
     state->Eq_type = make_type(state, "Eq", state->cmpop_type, NULL, 0,
@@ -1788,6 +1792,12 @@ static int init_types(astmodulestate *state)
     state->NotIn_singleton = PyType_GenericNew((PyTypeObject
                                                *)state->NotIn_type, NULL, NULL);
     if (!state->NotIn_singleton) return 0;
+    state->ALE_type = make_type(state, "ALE", state->cmpop_type, NULL, 0,
+        "ALE");
+    if (!state->ALE_type) return 0;
+    state->ALE_singleton = PyType_GenericNew((PyTypeObject *)state->ALE_type,
+                                             NULL, NULL);
+    if (!state->ALE_singleton) return 0;
     state->comprehension_type = make_type(state, "comprehension",
                                           state->AST_type,
                                           comprehension_fields, 4,
@@ -4532,6 +4542,9 @@ PyObject* ast2obj_cmpop(astmodulestate *state, cmpop_ty o)
         case NotIn:
             Py_INCREF(state->NotIn_singleton);
             return state->NotIn_singleton;
+        case ALE:
+            Py_INCREF(state->ALE_singleton);
+            return state->ALE_singleton;
     }
     Py_UNREACHABLE();
 }
@@ -9374,6 +9387,14 @@ obj2ast_cmpop(astmodulestate *state, PyObject* obj, cmpop_ty* out, PyArena*
         *out = NotIn;
         return 0;
     }
+    isinstance = PyObject_IsInstance(obj, state->ALE_type);
+    if (isinstance == -1) {
+        return 1;
+    }
+    if (isinstance) {
+        *out = ALE;
+        return 0;
+    }
 
     PyErr_Format(PyExc_TypeError, "expected some sort of cmpop, but got %R", obj);
     return 1;
@@ -10736,6 +10757,10 @@ astmodule_exec(PyObject *m)
         return -1;
     }
     Py_INCREF(state->NotIn_type);
+    if (PyModule_AddObject(m, "ALE", state->ALE_type) < 0) {
+        return -1;
+    }
+    Py_INCREF(state->ALE_type);
     if (PyModule_AddObject(m, "comprehension", state->comprehension_type) < 0) {
         return -1;
     }

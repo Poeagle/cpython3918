@@ -199,6 +199,7 @@ extern "C"
     static PyStatus
     init_importlib_external(PyThreadState *tstate)
     {
+        _showFuncName;
         PyObject *value;
         value = PyObject_CallMethod(tstate->interp->importlib,
                                     "_install_external_importers", "");
@@ -578,6 +579,8 @@ extern "C"
                               const PyConfig *config,
                               PyThreadState **tstate_p)
     {
+        // [cymDebug -> create interpreter]
+        _showFuncName;
         PyInterpreterState *interp = PyInterpreterState_New();
         if (interp == NULL)
         {
@@ -610,6 +613,7 @@ extern "C"
     static PyStatus
     pycore_init_types(PyThreadState *tstate)
     {
+        _showFuncName;
         PyStatus status;
         int is_main_interp = _Py_IsMainInterpreter(tstate);
 
@@ -681,6 +685,7 @@ extern "C"
     static PyStatus
     pycore_init_builtins(PyThreadState *tstate)
     {
+        _showFuncName;
         assert(!_PyErr_Occurred(tstate));
 
         PyObject *bimod = _PyBuiltin_Init(tstate);
@@ -728,6 +733,7 @@ extern "C"
     static PyStatus
     pycore_init_import_warnings(PyThreadState *tstate, PyObject *sysmod)
     {
+        _showFuncName;
         assert(!_PyErr_Occurred(tstate));
 
         PyStatus status = _PyImportHooks_Init(tstate);
@@ -774,6 +780,7 @@ extern "C"
     static PyStatus
     pycore_interp_init(PyThreadState *tstate)
     {
+        _showFuncName;
         PyStatus status;
         PyObject *sysmod = NULL;
 
@@ -808,6 +815,7 @@ extern "C"
                   PyThreadState **tstate_p,
                   const PyConfig *config)
     {
+        _showFuncName;
         PyStatus status = pycore_init_runtime(runtime, config);
         if (_PyStatus_EXCEPTION(status))
         {
@@ -815,6 +823,7 @@ extern "C"
         }
 
         PyThreadState *tstate;
+        // 创建解释器
         status = pycore_create_interpreter(runtime, config, &tstate);
         if (_PyStatus_EXCEPTION(status))
         {
@@ -822,6 +831,7 @@ extern "C"
         }
         *tstate_p = tstate;
 
+        // 初始化解释器
         status = pycore_interp_init(tstate);
         if (_PyStatus_EXCEPTION(status))
         {
@@ -968,6 +978,7 @@ extern "C"
                 const PyConfig *src_config,
                 PyThreadState **tstate_p)
     {
+        _showFuncName;
         PyStatus status;
 
         status = _Py_PreInitializeFromConfig(src_config, NULL);
@@ -1015,6 +1026,7 @@ extern "C"
     static PyStatus
     _Py_ReconfigureMainInterpreter(PyThreadState *tstate)
     {
+        _showFuncName;
         const PyConfig *config = _PyInterpreterState_GetConfig(tstate->interp);
 
         PyObject *argv = _PyWideStringList_AsList(&config->argv);
@@ -1035,6 +1047,8 @@ extern "C"
     static PyStatus
     init_interp_main(PyThreadState *tstate)
     {
+        // [cymDebug -> init_interp_main]
+        _showFuncName;
         assert(!_PyErr_Occurred(tstate));
 
         PyStatus status;
@@ -1175,6 +1189,7 @@ extern "C"
     static PyStatus
     pyinit_main(PyThreadState *tstate)
     {
+        _showFuncName;
         PyInterpreterState *interp = tstate->interp;
         if (!interp->runtime->core_initialized)
         {
@@ -1210,6 +1225,7 @@ extern "C"
     PyStatus
     Py_InitializeFromConfig(const PyConfig *config)
     {
+        _showFuncName;
         if (config == NULL)
         {
             return _PyStatus_ERR("initialization config is NULL");
@@ -1222,14 +1238,17 @@ extern "C"
         {
             return status;
         }
+
         _PyRuntimeState *runtime = &_PyRuntime;
 
+        // 线程状态登场
         PyThreadState *tstate = NULL;
         status = pyinit_core(runtime, config, &tstate);
         if (_PyStatus_EXCEPTION(status))
         {
             return status;
         }
+
         config = _PyInterpreterState_GetConfig(tstate->interp);
 
         if (config->_init_main)

@@ -180,6 +180,7 @@ extern "C"
     static inline PyObject *
     PyObject_CallOneArg(PyObject *func, PyObject *arg)
     {
+        _showFuncName;
         PyObject *_args[2];
         PyObject **args;
         PyThreadState *tstate;

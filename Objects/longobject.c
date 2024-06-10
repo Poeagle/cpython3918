@@ -1858,7 +1858,6 @@ long_to_decimal_string_internal(PyObject *aa,
                                 _PyBytesWriter *bytes_writer,
                                 char **bytes_str)
 {
-    printf("long_to_decimal_string_internal \n");
     PyLongObject *scratch,
         *a;
     PyObject *str = NULL;
@@ -2090,7 +2089,6 @@ long_to_decimal_string_internal(PyObject *aa,
 static PyObject *
 long_to_decimal_string(PyObject *aa)
 {
-    printf("long_to_decimal_string \n");
     PyObject *v;
     if (long_to_decimal_string_internal(aa, &v, NULL, NULL, NULL) == -1)
         return NULL;

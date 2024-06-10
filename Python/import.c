@@ -93,6 +93,7 @@ extern "C"
     PyStatus
     _PyImportZip_Init(PyThreadState *tstate)
     {
+        _showFuncName;
         PyObject *path_hooks, *zipimport;
         int err = 0;
 
@@ -1606,6 +1607,7 @@ extern "C"
     PyObject *
     PyImport_ImportModule(const char *name)
     {
+        _showFuncName;
         PyObject *pname;
         PyObject *result;
 
@@ -2212,6 +2214,7 @@ extern "C"
     PyObject *
     PyImport_Import(PyObject *module_name)
     {
+        _showFuncName;
         PyThreadState *tstate = _PyThreadState_GET();
         static PyObject *silly_list = NULL;
         static PyObject *builtins_str = NULL;

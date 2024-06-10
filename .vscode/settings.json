@@ -7,6 +7,22 @@
 		"python.h": "c",
 		"system_error": "c",
 		"opcode_targets.h": "c",
-		"typeinfo": "c"
-	}
+		"typeinfo": "c",
+		"longintrepr.h": "c",
+		"exception": "c",
+		"pycore_pystate.h": "c",
+		"ast.h": "c",
+		"pycore_tupleobject.h": "c",
+		"bltinmodule.c.h": "c",
+		"pycore_pyerrors.h": "c",
+		"pycore_object.h": "c",
+		"pycore_initconfig.h": "c",
+		"pycore_sysmodule.h": "c",
+		"tupleobject.c.h": "c",
+		"sysmodule.h": "c",
+		"dictobject.h": "c",
+		"dictobject.c.h": "c",
+		"pycore_gil.h": "c"
+	},
+	"python.languageServer": "Pylance"
 }

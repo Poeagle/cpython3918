@@ -3,8 +3,12 @@
 
 // 自己定义的宏
 // [cymDebug]: define macro
-#define _showFuncName printf("%s\n", __func__)
+#ifdef OPEN
+#define _showFuncName printf("\033[33m%s %d : %s\033[0m\n", __FILE__, __LINE__, __func__);
 #define _showOpcode(name) printf("opcode: %02x opName: %s oparg: %02x\n", opcode, name, oparg);
+#endif
+#define _showFuncName
+#define _showOpcode(name)
 
 /* Since this is a "meta-include" file, no #ifdef __cplusplus / extern "C" { */
 

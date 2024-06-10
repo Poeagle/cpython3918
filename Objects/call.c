@@ -653,6 +653,7 @@ callmethod(PyThreadState *tstate, PyObject *callable, const char *format, va_lis
 PyObject *
 PyObject_CallMethod(PyObject *obj, const char *name, const char *format, ...)
 {
+    _showFuncName;
     PyThreadState *tstate = _PyThreadState_GET();
 
     if (obj == NULL || name == NULL)
