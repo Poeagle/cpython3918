@@ -7,6 +7,8 @@ work. One should use importlib as the public-facing version of this module.
 
 """
 # #
+
+#
 # IMPORTANT: Whenever making changes to this module, be sure to run a top-level
 # `make regen-importlib` followed by `make` in order to get the frozen version
 # of the module updated. Not doing so will result in the Makefile to fail for
